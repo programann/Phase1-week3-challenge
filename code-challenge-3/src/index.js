@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     let idTicketnum = document.getElementById("ticket-num")
     
     
-    function grabMovie(){
+    function chooseMovie(){
         fetch(url)
         .then(res => res.json())
         .then(data => { 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         )
         .catch(e => console.log(e.message));
     }
-    grabMovie();
+    chooseMovie();
     function addMovie(movies){
         
         let remaining = movies.capacity - movies.tickets_sold;
@@ -88,61 +88,5 @@ document.addEventListener("DOMContentLoaded",()=>{
         let button = document.querySelector([data-movie-id="${movieId}"]);
         button.innerText = availabiity;
     }
-    function buyTicket(movies){
-        movies.tickets_sold++
-        let ticketsSold = movies.tickets_sold;
-        let requestHeaders = {
-            "Content-Type": "application/json"
-        }
-        let requestBody = {
-            "tickets_sold": ticketsSold
-        }
-        fetch(url+movies.id,{
-            method: "PATCH",
-            headers: requestHeaders,    
-            body: JSON.stringify(requestBody)
-        })
-        .then (res => res.json())
-        .then (data => {
-            updateDom(data);
     
-            let numberOfTickets = (data.capacity - data.tickets_sold)
-    
-            if(!numberOfTickets > 0)
-            { grabMovie()
-            }
-    
-            let  RequestBodyTickets =  {
-                "film_id": data.id,
-                "number_of_tickets": numberOfTickets
-             }
-    
-            fetch("http://localhost:3000/tickets",{
-                method: "POST",
-                headers: requestHeaders,    
-                body: JSON.stringify(RequestBodyTickets)
-            })
-            .then (res => res.json())
-            .then(data => data)
-            .catch (e => console.log(e.message));
-    
-        })
-        .catch (e => console.log(e.message));
-    }
-    function deleteMovie(movie){
-        let requestHeaders = {
-            "Content-Type": "application/json"
-        }
-        let requestBody = {
-            "id": movie.id
-        }
-        fetch(url+movie.id, {
-            method: "DELETE",
-            headers: requestHeaders,    
-            body: JSON.stringify(requestBody)
-        })
-        .then (res => res.json())
-        .then (data => grabMovie())
-        .catch (e => console.log(e.message));
-    }
 })
