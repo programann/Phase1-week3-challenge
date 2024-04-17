@@ -11,7 +11,7 @@ let showTime = document.getElementById("showtime")
 let ticketNum = document.getElementById("ticket-num")
 
 
-// when this function is called it grabes all the movies from the db.json endpoint and updates the DOM
+// when this function is called it gets all the movies from the db.json endpoint and updates the DOM
 function getMovie(updateDesc = true){
     ulFilms.innerHTML = "";
     fetch(url)
@@ -19,7 +19,7 @@ function getMovie(updateDesc = true){
     .then(data => { 
         if(data.length > 0){
             if(updateDesc){
-                updateMovieDesc(data[0]);
+                newMovie(data[0]);
             }
 
             data.map(movie => {
@@ -37,7 +37,7 @@ function getMovie(updateDesc = true){
         console.log(e.message)
         let liNoData = document.createElement("li");
         liNoData.style.color="red";
-        liNoData.innerText = "We couldnt fetch Movies at the moment please try again later";
+        liNoData.innerText = "No movies at the moment";
         ulFilms.appendChild(liNoData);
     });
 }
@@ -47,14 +47,14 @@ getMovie(true);
 //this funcion updates the title of the movies in left list ul parent
 function addMovie(movies){
     
-    let remaining = movies.capacity - movies.tickets_sold;
+    let remainder = movies.capacity - movies.tickets_sold;
 
     movieTitle = movies.title
     movieId = movies.id
     let liFilm = document.createElement("li");
-    if(!remaining > 0)
+    if(!remainder > 0)
     {  liFilm.className = "sold-out"
-        liFilm.style.backgroundColor = "rgba(255, 0, 0, 0.2";
+        liFilm.style.backgroundColor = "blue";
     }
     ulFilms.appendChild(liFilm);
 
@@ -71,18 +71,18 @@ function addMovie(movies){
         deleteMovie(movies)
     })
     movieSpan.addEventListener('click', () => {
-        updateMovieDesc(movies);
+        newMovie(movies);
     })
 }
 
 
 // when this function is called it updates the image div and more information on the next div 
-function updateMovieDesc(movies){
-    let remaining = movies.capacity - movies.tickets_sold;
+function newMovie(movies){
+    let remainder = movies.capacity - movies.tickets_sold;
     let movieId = movies.id;
     let availabiity;
 
-    if(remaining > 0){
+    if(remainder > 0){
         availabiity = "Buy Ticket"
     }else{
         availabiity = "Sold out"
@@ -94,14 +94,14 @@ function updateMovieDesc(movies){
     runTime.innerText = movies.runtime + " minutes";
     filmInfo.innerText = movies.description;
     showTime.innerText = movies.showtime;
-    ticketNum.innerText = remaining;
+    ticketNum.innerText = remainder;
 
     idBuyticket.onclick = () => {
-        if(remaining > 0)
+        if(remainder > 0)
         { 
              buyTicket(movies)
         }else{
-            alert("Opps Ticket is Sold Out already !!")
+            alert("Oops, Ticket is Sold Out already !!")
         }
     };
     idBuyticket.dataset.movieId = movies.id;
@@ -109,7 +109,7 @@ function updateMovieDesc(movies){
     button.innerText = availabiity;
 }
 
-// when the buyTicket function is called is met to confirm if the are remaining tickets and if the tickets are available it can purchase ad take records of the tickets also
+// when the buyTicket function is called is met to confirm if the are remainder tickets and if the tickets are available it can purchase ad take records of the tickets also
 function buyTicket(movies){
     movies.tickets_sold++
     let ticketsSold = movies.tickets_sold;
@@ -126,7 +126,7 @@ function buyTicket(movies){
     })
     .then (res => res.json())
     .then (data => {
-        updateMovieDesc(data);
+        newMovie(data);
 
         let numberOfTickets = (data.capacity - data.tickets_sold)
 
